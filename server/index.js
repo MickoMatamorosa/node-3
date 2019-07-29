@@ -3,6 +3,7 @@ const massive = require('massive');
 const users = require('./controllers/users');
 const posts = require('./controllers/posts');
 const comments = require('./controllers/comments');
+const protect = require('./protect');
 
 massive({
     host: 'localhost',
@@ -16,9 +17,15 @@ massive({
     app.set('db', db);
   
     app.use(express.json());
+    
+    // Users
+    app.post('/api/register', users.create);
+    app.post('/api/login', users.login);
+
+    // Protected
+    app.use(protect);
 
     // Users
-    app.post('/api/users', users.create);
     app.get('/api/users', users.list);
     app.get('/api/users/:id', users.getById);
     app.get('/api/users/:id/profile', users.getProfile);
@@ -32,7 +39,7 @@ massive({
     app.post('/api/comments', comments.create);
     app.patch('/api/comment/:cmtId', comments.editComment);
   
-    const PORT = 3001;
+    const PORT = 3003;
     app.listen(PORT, () => {
       console.log(`Server listening on port ${PORT}`);
     });
